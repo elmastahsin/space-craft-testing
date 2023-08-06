@@ -29,76 +29,42 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class CreateGameServiceImplTest {
 
-    private CreatePlayerServiceImpl createPlayerService;
+    private CreateGameServiceImpl createGameService;
+
+    @Mock
+    private CreatePlayerService createPlayerService;
+    @Mock
+    private CreateTargetService createTargetService;
+    @Mock
+    private GameRepository gameRepository;
 
     @BeforeEach
     public void setUp(){
-        createPlayerService = new CreatePlayerServiceImpl();
+        createGameService = new CreateGameServiceImpl(createPlayerService, createTargetService,gameRepository);
     }
 
     @Test
-    public void should_create_player_with_big_bomb_boost_type_and_level_easy(){
-        // given
+    public void should_create_game_successfully(){
+        //given
         CreateGameDTO createGameDTO = new CreateGameDTO();
+        createGameDTO.setUsername("username");
         createGameDTO.setBoost(Boost.BIG_BOMB);
         createGameDTO.setLevel(Level.EASY);
-        createGameDTO.setUsername("username");
+        Player player = new Player();
 
+        Set<Target> targetSet = new HashSet<>(){{
+            add(new Target());
+        }};
+
+        Game game = new Game();
+        game.setId(1L);
         //when
-        Player player = createPlayerService.createPlayer(createGameDTO);
+        when(createPlayerService.createPlayer(createGameDTO)).thenReturn(player);
+        when(createTargetService.createTargets(createGameDTO.getLevel())).thenReturn(targetSet);
+        when(gameRepository.save(any())).thenReturn(game);
 
+        Long gameId = createGameService.createGame(createGameDTO);
         //then
-        assertEquals(player.getHealth(), 2000);
-        assertEquals(player.getArmor(), 7);
-        assertEquals(player.getShootPower(), 5010);
-    }
-
-    @Test
-    public void should_create_player_with_extra_shield_boost_type_and_level_easy(){
-        // given
-        CreateGameDTO createGameDTO = new CreateGameDTO();
-        createGameDTO.setBoost(Boost.EXTRA_SHIELD);
-        createGameDTO.setLevel(Level.EASY);
-        createGameDTO.setUsername("username");
-
-        //when
-        Player player = createPlayerService.createPlayer(createGameDTO);
-
-        //then
-        assertEquals(player.getHealth(), 4145);
-        assertEquals(player.getArmor(), 242);
-        assertEquals(player.getShootPower(), 10);
-    }
-
-    @Test
-    public void should_create_player_with_super_ammo_boost_type_and_level_easy(){
-        // given
-        CreateGameDTO createGameDTO = new CreateGameDTO();
-        createGameDTO.setBoost(Boost.SUPER_AMMO);
-        createGameDTO.setLevel(Level.EASY);
-        createGameDTO.setUsername("username");
-
-        //when
-        Player player = createPlayerService.createPlayer(createGameDTO);
-
-        //then
-        assertEquals(player.getHealth(), 2000);
-        assertEquals(player.getArmor(), 7);
-        assertEquals(player.getShootPower(), 160);
-    }
-    @Test
-    public void should_throw_exception_when_boost_type_is_high_speed(){
-        // given
-        CreateGameDTO createGameDTO = new CreateGameDTO();
-        createGameDTO.setBoost(Boost.HIGH_SPEED);
-        createGameDTO.setLevel(Level.EASY);
-        createGameDTO.setUsername("username");
-
-        //then
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () ->{
-            createPlayerService.createPlayer(createGameDTO);
-        });
-
-        assertEquals(runtimeException.getMessage(),"Boost type must be valid");
+        assertEquals(gameId, 1L);
     }
 }
