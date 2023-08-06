@@ -35,4 +35,34 @@ public class CreateTargetServiceImplTest {
         assertEquals(target.getArmor(),7);
         assertEquals(target.getShootPower(), 10);
    }
+   @Test
+    public void should_create_target_with_level_medium(){
+        // given
+        Level level = Level.MEDIUM;
+
+        //when
+        Set<Target> targets = createTargetService.createTargets(level);
+
+        //then
+        Target target = targets.stream().findFirst().get();
+        assertEquals(targets.size(),3);
+        assertEquals(target.getHealth(),932);
+        assertEquals(target.getArmor(),301);
+        assertEquals(target.getShootPower(), 10);
+   }
+   @Test
+    public void should_create_target_with_level_hard(){
+        // given
+        Level level = Level.HARD;
+
+        //when
+        Set<Target> targets = createTargetService.createTargets(level);
+
+        //then
+        Target target = targets.stream().findFirst().get();
+        assertEquals(targets.size(),4);
+        assertEquals(target.getHealth(),1165);
+        assertEquals(target.getArmor(),581);
+        assertEquals(target.getShootPower(), 1000);
+   }
 }
