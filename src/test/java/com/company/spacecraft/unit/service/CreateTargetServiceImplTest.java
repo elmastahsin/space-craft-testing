@@ -65,4 +65,19 @@ public class CreateTargetServiceImplTest {
         assertEquals(target.getArmor(),581);
         assertEquals(target.getShootPower(), 1000);
    }
+   @Test
+    public void should_create_target_with_level_insane(){
+        // given
+        Level level = Level.INSANE;
+
+        //when
+        Set<Target> targets = createTargetService.createTargets(level);
+
+        //then
+        Target target = targets.stream().findFirst().get();
+        assertEquals(targets.size(),5);
+        assertEquals(target.getHealth(),1165);
+        assertEquals(target.getArmor(),581);
+        assertEquals(target.getShootPower(), 1000);
+   }
 }
