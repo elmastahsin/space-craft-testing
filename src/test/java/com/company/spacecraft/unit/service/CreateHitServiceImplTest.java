@@ -26,5 +26,15 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class CreateHitServiceImplTest {
 
+    private CreateHitServiceImpl createHitService;
+
+    @Mock
+    private GameRepository gameRepository;
+
+    @BeforeEach
+    public void setUp() {
+        createHitService = new CreateHitServiceImpl(gameRepository);
+    }
+
 
 }

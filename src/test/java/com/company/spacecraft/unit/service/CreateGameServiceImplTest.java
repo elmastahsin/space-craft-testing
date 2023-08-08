@@ -39,12 +39,12 @@ public class CreateGameServiceImplTest {
     private GameRepository gameRepository;
 
     @BeforeEach
-    public void setUp(){
-        createGameService = new CreateGameServiceImpl(createPlayerService, createTargetService,gameRepository);
+    public void setUp() {
+        createGameService = new CreateGameServiceImpl(createPlayerService, createTargetService, gameRepository);
     }
 
     @Test
-    public void should_create_game_successfully(){
+    public void should_create_game_successfully() {
         //given
         CreateGameDTO createGameDTO = new CreateGameDTO();
         createGameDTO.setUsername("username");
@@ -52,7 +52,7 @@ public class CreateGameServiceImplTest {
         createGameDTO.setLevel(Level.EASY);
         Player player = new Player();
 
-        Set<Target> targetSet = new HashSet<>(){{
+        Set<Target> targetSet = new HashSet<>() {{
             add(new Target());
         }};
 
@@ -67,4 +67,45 @@ public class CreateGameServiceImplTest {
         //then
         assertEquals(gameId, 1L);
     }
+
+    @Test
+    public void should_throw_exception_when_level_is_empty() {
+        //given
+        CreateGameDTO createGameDTO = new CreateGameDTO();
+        createGameDTO.setUsername("username");
+        createGameDTO.setBoost(Boost.BIG_BOMB);
+
+//        Player player = new Player();
+//
+//        Set<Target> targetSet = new HashSet<>(){{
+//            add(new Target());
+//        }};
+//
+//        Game game = new Game();
+//        game.setId(1L);
+//        when(createPlayerService.createPlayer(createGameDTO)).thenReturn(player);
+//        when(createTargetService.createTargets(createGameDTO.getLevel())).thenReturn(targetSet);
+//        when(gameRepository.save(any())).thenReturn(game);
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
+            createGameService.createGame(createGameDTO);
+        });
+
+        assertEquals(runtimeException.getMessage(), "Game Level type must not null");
+    }
+
+    @Test
+    public void should_throw_exception_when_boost_is_empty() {
+        //given
+        CreateGameDTO createGameDTO = new CreateGameDTO();
+        createGameDTO.setUsername("username");
+        createGameDTO.setLevel(Level.EASY);
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> {
+            createGameService.createGame(createGameDTO);
+        });
+
+        assertEquals(runtimeException.getMessage(), "Game Boost type must not null");
+    }
+
 }
